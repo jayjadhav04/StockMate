@@ -104,9 +104,9 @@ Explore the live application and interactive API documentation:
 ![Notifications Screen](screenshots/notifications.png)
 *Displays warning notifications for low stock thresholds and approaching expiry dates.*
 
-### ⚙️ Settings Profile
-![Settings Page](screenshots/settings.png)
-*Allows configuration of business details, GST profiles, and profile credentials.*
+### ⚙️ Audit Logs
+![Settings Page](screenshots/audit_logs.png)
+*Security Audit Logs*
 
 ---
 
