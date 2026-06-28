@@ -376,5 +376,5 @@ This document lists every URL route available in the StockMate application, expl
 | `/audit-logs` | GET | 🔵 Owner | View audit event log |
 | `/health` | GET | Public | App health check |
 | `/api/charts/data` | GET | 🔵 Owner | JSON chart data |
-| `/docs` | GET | Public | Swagger UI |
-| `/redoc` | GET | Public | ReDoc API reference |
+| `/docs` | GET | Public | Swagger UI (Development only) |
+| `/redoc` | GET | Public | ReDoc API reference (Development only) |
