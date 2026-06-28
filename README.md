@@ -35,8 +35,6 @@ Whether you run a single retail storefront or coordinate a multi-channel operati
 12. [🔮 Future Improvements](#-future-improvements)
 13. [🎯 Why This Project](#-why-this-project)
 14. [✍️ Author](#%EF%B8%8F-author)
-15. [📄 License](#-license)
-16. [⭐ Support](#-support)
 
 ---
 
