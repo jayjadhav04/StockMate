@@ -1,131 +1,164 @@
-# StockMate - Inventory & Sales Management System
+# 📦 StockMate - Inventory & Sales Management System
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71105?style=for-the-badge&logo=SQLAlchemy&logoColor=white)](https://www.sqlalchemy.org/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=Bootstrap&logoColor=white)](https://getbootstrap.com)
-[![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
+[![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-StockMate is a premium, transaction-safe inventory and sales billing application built using **FastAPI**, **SQLAlchemy ORM**, **Pydantic validation**, and a custom dark glassmorphic interface powered by **Bootstrap 5**. Designed specifically for retail and wholesale business management, the application enforces rigorous security boundaries, tracks comprehensive audit logs, computes real-time analytical aggregates, and guarantees transactional stock consistency under concurrent loads.
+**Manage Stock. Track Sales. Grow Business.**
 
----
+StockMate is a modern, high-performance, transaction-safe Inventory and Sales Management System built to streamline daily business operations. Developed primarily to demonstrate core backend engineering proficiency in Python, RESTful API design, database normalization, and robust concurrency handling.
 
-## 🌟 Key Features
+Whether you run a single retail storefront or coordinate a multi-channel operation, StockMate provides business owners and counter employees with a secure, responsive, and visually stunning tool to control stock levels, log sales, track procurement, and analyze financial performance.
 
-### 1. Advanced Inventory Control
-- **Low Stock Warnings**: Computes warnings dynamically when a product's stock levels fall below its predefined minimum threshold.
-- **Product Expiry Alerts**: Automatically flags products as "Expired" or "Expiring Soon" (within 30 days) to prevent waste.
-- **Hierarchical Categorization**: Supports nested product relationships with cascading cleanup options.
-
-### 2. Transaction-Safe Invoicing
-- **Sequential Invoices**: Formats unique invoice numbers (e.g. `INV-000001`) sequentially.
-- **Concurrence & Safety**: Leverages SQLAlchemy database row-level locking via `.with_for_update()` to prevent double-billing race conditions during multi-item checkout processes.
-- **Atomic Rollbacks**: Guarantees that if any item in a multi-product order fails inventory verification, the entire invoice transaction is cleanly rolled back.
-
-### 3. Business Analytics & Reporting
-- **Interactive Charts**: Render daily sales volume, monthly revenue, top-selling items, and category ratios using Chart.js.
-- **Custom Presets**: Filter aggregated profits and sales count by preset intervals (Today, Yesterday, Last 7 Days, Month, Year, or Custom range).
-- **PDF & CSV Exporting**: Stream printable PDF invoice sheets dynamically via ReportLab and download raw products, customers, and sales data as CSV streams.
-
-### 4. Security & Audit Trail
-- **Role-Based Routing**: Restricts administrative dashboards, user registers, and audit trails to the `Owner` role, while granting checkout access to `Employee` credentials.
-- **Security Audit Logs**: Silently records critical changes (creations, modifications, deletions, authentication events) across database sub-transactions. Logs include IP tracking, timestamps, and initiating user IDs.
-- **Self-Deletion Lock**: Restricts administrative accounts from deleting themselves.
+### Ideal For:
+* **Retail Stores & Shop Owners** – Fast invoice generation and real-time stock deductions.
+* **Wholesalers & Distributors** – Track bulk purchasing lists and vendor relations.
+* **Warehouses & Small Businesses** – Automated alerts for low stock levels and expiring products.
 
 ---
 
-## 🏗️ System Architecture
+## 📋 Table of Contents
+1. [🌐 Live Demo](#-live-demo)
+2. [📸 Screenshots](#-screenshots)
+3. [🚀 Features](#-features)
+4. [🛠️ Technology Stack](#%EF%B8%8F-technology-stack)
+5. [📂 Project Structure](#-project-structure)
+6. [🗄️ Database Schema](#%EF%B8%8F-database-schema)
+7. [🔄 Application Workflow](#-application-workflow)
+8. [💻 Installation Guide](#-installation-guide)
+9. [🔑 Environment Variables](#-environment-variables)
+10. [📖 API Documentation](#-api-documentation)
+11. [☁️ Deployment](#%EF%B8%8F-deployment)
+12. [🔮 Future Improvements](#-future-improvements)
+13. [🎯 Why This Project](#-why-this-project)
+14. [✍️ Author](#%EF%B8%8F-author)
+15. [📄 License](#-license)
+16. [⭐ Support](#-support)
 
-### Component Flow Diagram
-The following diagram illustrates how HTTP requests flow through the application's clean, layered architecture:
+---
 
-```mermaid
-graph TD
-    Client[Browser / JSON Client] -->|HTTP Request| Routers[FastAPI Routing Layer]
-    Routers -->|Check Credentials| AuthDep[Auth Dependencies & JWT Verification]
-    AuthDep -->|Passes Auth| Endpoints[Route Handler Logic]
-    Endpoints -->|Get Session| DBConn[SQLAlchemy DB Session get_db]
-    Endpoints -->|CRUD Query| Models[SQLAlchemy DB Models]
-    Models <-->|Read / Write| SQLDatabase[(SQLite / MySQL Database)]
-    Endpoints -->|JSON/HTML Response| Client
-```
+## 🌐 Live Demo
 
-### Database Entity-Relationship Diagram (ERD)
-The database structure consists of seven fully relational tables:
+Explore the live application and interactive API documentation:
 
-```mermaid
-erDiagram
-    users ||--o{ sales : "registers"
-    users ||--o{ audit_logs : "triggers"
-    customers ||--o{ sales : "billed_to"
-    categories ||--o{ products : "contains"
-    products ||--o{ sale_items : "sold_in"
-    sales ||--|{ sale_items : "contains"
+| Service | Endpoint / Link | Description |
+| :--- | :--- | :--- |
+| **Frontend / Web App** | `https://YOUR_RAILWAY_DEPLOYMENT_LINK` | Access the dashboards and UI screens. |
+| **API Documentation** | `https://YOUR_RAILWAY_DEPLOYMENT_LINK/docs` | Interactive Swagger UI for REST endpoint testing. |
+| **GitHub Repository** | `https://github.com/YOUR_GITHUB_REPOSITORY` | Explore the codebase and project commits. |
 
-    users {
-        int id PK
-        string full_name
-        string email UK
-        string password "Hashed"
-        string role "Owner / Employee"
-        datetime created_at
-    }
-    
-    categories {
-        int id PK
-        string name UK
-        datetime created_at
-    }
+---
 
-    products {
-        int id PK
-        int category_id FK
-        string product_name
-        float cost_price
-        int stock_quantity
-        int minimum_stock
-        date manufacturing_date
-        date expiry_date
-        datetime created_at
-    }
+## 📸 Screenshots
 
-    customers {
-        int id PK
-        string customer_name
-        string phone
-        string email
-        string address
-        datetime created_at
-    }
+### 🔑 Login Page
+![Login Page](screenshots/login.png)
+*Provides secure, session-managed entry points for Owners and Employees.*
 
-    sales {
-        int id PK
-        string invoice_number UK
-        int customer_id FK
-        int employee_id FK
-        float total_amount
-        float total_profit
-        datetime created_at
-    }
+### 📊 Owner Dashboard
+![Owner Dashboard](screenshots/owner_dashboard.png)
+*Provides Owner-only financial analytics including daily sales, monthly revenue trend charts, and alert summaries.*
 
-    sale_items {
-        int id PK
-        int sale_id FK
-        int product_id FK
-        int quantity
-        float selling_price
-        float line_total
-        float line_profit
-    }
+### 👤 Employee Dashboard
+![Employee Dashboard](screenshots/employee_dashboard.png)
+*A clean workspace for sales agents to record sales and check products.*
 
-    audit_logs {
-        int id PK
-        int user_id FK "nullable"
-        string action "e.g. PRODUCT_DELETE"
-        string details
-        string ip_address
-        datetime timestamp
-    }
-```
+### 📦 Product Management
+![Product Management](screenshots/products_page.png)
+*Real-time product grid with automated visual warnings for Expired, Low Stock, and Expiring Soon items.*
+
+### 👥 Customer Management
+![Customer Management](screenshots/customers.png)
+*Maintains a registry of customer contact details and transaction history.*
+
+### 🏭 Supplier Management
+![Supplier Management](screenshots/suppliers.png)
+*Tracks contact information and purchase history for replenishment vendors.*
+
+### 🛍️ Purchase Module (Replenishments)
+![Purchase Module](screenshots/purchases.png)
+*Enables employees to draft restocking orders, awaiting owner approval before updating inventory.*
+
+### 🛒 Sales Module (Point of Sale)
+![Sales Module](screenshots/sales_create.png)
+*Interactive multi-item checkout builder that dynamically computes prices, sub-totals, and GST.*
+
+### 📄 Dynamic Invoice PDF
+![Invoice PDF](screenshots/invoice_pdf.png)
+*Sample dynamic invoice generated programmatically with full business branding and GST calculations.*
+
+### 📈 Reports & Analytics
+![Reports Page](screenshots/reports.png)
+*Provides customized date filters for profit analysis and data exporting.*
+
+### 📉 Analytical Charts
+![Charts View](screenshots/charts.png)
+*Chart.js graphics representing revenue flow, category distributions, and top product metrics.*
+
+### 🔔 System Notifications
+![Notifications Screen](screenshots/notifications.png)
+*Displays warning notifications for low stock thresholds and approaching expiry dates.*
+
+### ⚙️ Settings Profile
+![Settings Page](screenshots/settings.png)
+*Allows configuration of business details, GST profiles, and profile credentials.*
+
+---
+
+## 🚀 Features
+
+### 🔐 Authentication & Security
+* **Secure Login / Logout**: Uses HTTP-Only secure cookies to manage state and session tokens.
+* **Role-Based Access Control (RBAC)**: Restricts administrative modules (Audit Logs, Reports, Employee registers) strictly to `Owner` accounts, while permitting counter checkout processes to `Employee` credentials.
+* **Password Hashing**: Implements secure one-way hashing algorithms (bcrypt) to safely store credentials.
+* **Route Protection**: Validates JWT payloads on every requests to prevent session hijacking.
+
+### 📦 Inventory Control
+* **Product Catalog**: Full CRUD capabilities for recording product cost prices, selling prices, stock levels, and expiry alerts.
+* **Nested Categories**: Standardizes hierarchical categorization with cascading validations.
+* **Low Stock Warnings**: Computes dynamic warnings whenever product levels drop below their minimum threshold.
+* **Expiry Tracking**: Flags items automatically as "Expired" or "Expiring Soon" (within 30 days) to prevent waste.
+* **Search & Filters**: Multi-parameter search by keyword, category, and alert status.
+
+### 🛒 Sales & Billing
+* **Customer Ledger**: Integrates customer contact numbers and emails with their historical purchases.
+* **Multi-Product Checkout**: Point-of-sale interface to build, adjust, and submit sales with live price updates.
+* **Atomic Deductions**: Utilizes database-level locking (`.with_for_update()`) to prevent race conditions during concurrent checkouts, rolling back transactions completely if any item check fails.
+* **Profit Calculations**: Calculates revenue margins per line item and stores aggregates for financial reporting.
+
+### 🏭 Purchases & Restocking
+* **Supplier Directory**: Manages vendor contacts and logs previous procurement transactions.
+* **Purchase Orders**: Standardizes replenishment drafts. Stock levels and average unit cost prices are only updated upon Owner approval.
+
+### 📊 Business Intelligence & Exports
+* **Live Dashboards**: High-impact dashboards rendering charts for Daily Sales, Monthly Trends, Category distribution, and Top-Selling inventory.
+* **Financial Reports**: Custom interval queries (Today, Yesterday, Last 7 Days, Month, Year, Custom Range) compiling net revenues and margins.
+* **Data Streams**: Streams large datasets directly into CSV files for Excel importing.
+* **PDF Billing**: Instantly generates clean PDF invoice sheets formatted with client and server information using ReportLab.
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Backend** | **Python** | Core application runtime. |
+| | **FastAPI** | High-performance, asynchronous REST framework. |
+| **Frontend** | **HTML5 & CSS3** | Dynamic page structures. |
+| | **Bootstrap 5** | Responsive layout styling and dark custom glassmorphic overrides. |
+| | **Vanilla JavaScript** | Asynchronous fetches, dynamic form rows, and modal interactions. |
+| **Database** | **MySQL / SQLite** | Relational transactional databases. |
+| | **SQLAlchemy** | Database Object Relational Mapper (ORM) with transaction manager. |
+| **Validation** | **Pydantic** | Strict runtime schema parsing and request verification. |
+| **Visualizations** | **Chart.js** | Renders HTML5 Canvas dashboards. |
+| **Reporting** | **ReportLab** | Generates dynamic PDF invoice streams. |
+| **Deployment** | **Railway** | Cloud hosting with automated continuous deployment. |
+| **VCS** | **Git & GitHub** | Source code management. |
 
 ---
 
@@ -135,334 +168,282 @@ erDiagram
 StockMate/
 │
 ├── app/
-│   ├── auth/              # JWT tokens, password hashing, and role checks
-│   ├── models/            # SQLAlchemy Database schemas
-│   ├── routers/           # API and HTML endpoints
-│   ├── schemas/           # Pydantic schema validation structures
-│   ├── static/            # CSS styles and front-end scripts
-│   ├── templates/         # Jinja2 HTML views (Dashboards, CRUD Modals, Invoices)
-│   ├── utils/             # Helpers (PDF drawers, CSV streams, logger)
-│   ├── config.py          # Pydantic Settings management
-│   ├── database.py        # SQLAlchemy engine and session configurations
-│   └── main.py            # Application startup and global error handling
+│   ├── auth/              # Security dependencies, role tokens, and bcrypt hashing
+│   ├── models/            # SQLAlchemy Database structures (User, Sale, Product, etc.)
+│   ├── routers/           # REST Endpoints and HTML controllers
+│   ├── schemas/           # Pydantic schemas for payload validation
+│   ├── static/            # Frontend assets (CSS styles, JS modules, logo images)
+│   ├── templates/         # Jinja2 templates (dashboard layouts, invoices, modals)
+│   ├── utils/             # Business helpers (PDF builder, CSV exporter, logger)
+│   ├── config.py          # Settings parser with environment variables
+│   ├── database.py        # Database engine setup and local session getters
+│   └── main.py            # Main ASGI app init, middleware, and startup triggers
 │
-├── tests/                 # Automated Pytest suite
-├── Procfile               # Cloud deployment process script
-├── runtime.txt            # Python compiler version configuration
-├── requirements.txt       # Project python dependencies package file
-└── stockmate.db           # SQLite local developer database
+├── tests/                 # Unit and integration test suites (Pytest)
+├── screenshots/           # UI image walkthrough files
+├── Procfile               # Railway process commands
+├── runtime.txt            # Python compiler instructions
+├── requirements.txt       # Python dependency package manifests
+└── stockmate.db           # SQLite database for local development
 ```
 
 ---
 
-## 🚀 Local Installation & Setup
+## 🗄️ Database Schema
+
+StockMate uses a normalized, relational database schema configured with foreign key constraints, indexes for rapid querying, and cascade rules.
+
+```
+                   ┌────────────┐
+                   │ Categories │
+                   └──────┬─────┘
+                          │ 1
+                          │
+                          │ *
+┌───────────┐      ┌──────┴───┐      ┌────────────┐
+│ Suppliers ├──────┤ Products ├──────┤ Sale_Items │
+└─────┬─────┘ 1    └──────────┘ *    └─────┬──────┘
+      │                                    │ *
+      │ 1                                  │
+┌─────┴─────┐                              │ 1
+│ Purchases │                              │
+└─────┬─────┘ 1                            │
+      │                                    │
+      │ *                                  │
+┌─────┴────────────────┐             ┌─────┴───┐
+│ Purchase_Order_Items │             │  Sales  │
+└──────────────────────┘             └────┬────┘
+                                          │ *
+                                          │
+                                          │ 1
+                                     ┌────┴──────┐
+                                     │ Customers │
+                                     └───────────┘
+```
+
+### Table Definitions & Relationships:
+
+1. **`users`**
+   * Stores credential hashes and system designations (`Owner` or `Employee`).
+   * *Relationships*: Has a one-to-many relationship with `sales` (employee who processed the sale) and `audit_logs` (user who triggered the event).
+2. **`categories`**
+   * Manages classifications for products (e.g., Electronics, Groceries).
+   * *Relationships*: One-to-many relationship with `products`. Removing a category cascades validation to prevent orphaned products.
+3. **`products`**
+   * Stores core inventory specifications, pricing structures, stock counts, and expiry thresholds.
+   * *Relationships*: Belongs to a single `category`. Linked to `sale_items` and `purchase_order_items`.
+4. **`suppliers`**
+   * Stores procurement vendor profiles.
+   * *Relationships*: Has a one-to-many relationship with `purchases` orders.
+5. **`purchases`**
+   * Tracks restocking requests. Statuses include `Pending` and `Completed`.
+   * *Relationships*: Belongs to a `supplier`. Has many `purchase_order_items`.
+6. **`purchase_order_items`**
+   * Stores the breakdown details of a purchase order (product quantities, unit costs).
+   * *Relationships*: Connects `purchases` to the specific `products` being restocked.
+7. **`customers`**
+   * Records retail and corporate clients.
+   * *Relationships*: One-to-many relationship with `sales` invoices.
+8. **`sales`**
+   * Represents transactions. Compiles revenue totals, profit aggregates, and GST.
+   * *Relationships*: Linked to a `customer` and the processing `employee` (from `users`). Has many `sale_items`.
+9. **`sale_items`**
+   * Individual invoice lines storing historical transaction pricing and counts.
+   * *Relationships*: Pairs each `sales` record to `products`.
+10. **`company_profile` / `business_settings`**
+    * Stores meta details like Business Name, Address, GST Registration Number, and Tax rates used in PDF headers.
+11. **`notifications`**
+    * Caches warnings for products with low stock levels or expiring dates.
+12. **`audit_logs`**
+    * Records security-sensitive operations. Tracks timestamps, actions, target descriptions, and IP addresses.
+
+---
+
+## 🔄 Application Workflow
+
+```
+[Login Screen] ──> [Verify Credentials] ──> [Check Role: Owner or Employee?]
+                                                     │
+       ┌─────────────────────────────────────────────┴─────────────────────────────────────────────┐
+       ▼                                                                                           ▼
+[Owner Dashboard]                                                                         [Employee Dashboard]
+* Visual Analytics & Charts                                                               * Personal Sales Counter
+* View Full Audit Logs & Reports                                                           * Quick POS Access
+* Manage Employee Accounts & CRUD Controls                                                * Search Inventory Details
+       │                                                                                           │
+       └──────────────────────────────────────┬────────────────────────────────────────────────────┘
+                                              ▼
+                                      [Billing/POS Screen]
+                                              │
+                                              ▼
+                                 [Select Customer & Products]
+                                              │
+                                              ▼
+                               [Atomic Stock & Inventory Checks]
+                                              │
+                    ┌─────────────────────────┴─────────────────────────┐
+                    ▼ (Success)                                         ▼ (Insufficent Stock)
+        [Update Stock Quantities]                                [Rollback Transaction]
+                    │                                                   │
+                    ▼                                                   ▼
+       [Commit Sale & Log Actions]                               [Display Error Banner]
+                    │
+                    ▼
+     [Generate Dynamic PDF Invoice]
+```
+
+---
+
+## 💻 Installation Guide
 
 ### Prerequisites
-- Python 3.9+ installed on your local machine.
+* Python 3.9 or higher.
+* MySQL Server (optional, defaults to SQLite local developer database).
 
-### 1. Clone & Set Up Directory
-Open your terminal in the workspace directory and execute:
+### Step 1: Clone Repository
+Clone this repository to your local directory:
 ```bash
-# Create python virtual environment
+git clone https://github.com/YOUR_GITHUB_REPOSITORY/StockMate.git
+cd StockMate
+```
+
+### Step 2: Create Virtual Environment
+Initialize a local python virtual environment to isolate package dependencies:
+```bash
 python -m venv .venv
-
-# Activate virtual environment
-# On Windows (CMD/PowerShell):
-.venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
 ```
 
-### 2. Install Dependencies
-Run the installation command (on Windows, `--only-binary=:all:` is recommended for a clean binary wheel install):
+### Step 3: Activate Virtual Environment
+Activate the environment:
+* **Windows (Command Prompt / PowerShell)**:
+  ```powershell
+  .venv\Scripts\activate
+  ```
+* **macOS / Linux**:
+  ```bash
+  source .venv/bin/activate
+  ```
+
+### Step 4: Install Requirements
+Install all dependencies using pip:
 ```bash
-pip install -r app/requirements.txt --only-binary=:all:
+pip install -r requirements.txt
 ```
 
-### 3. Configure Environments
-Create a `.env` file in your root folder:
+### Step 5: Configure Environment Variables
+Copy the environment variables template and configure your parameters:
+```bash
+cp .env.example .env
+```
+*(On Windows cmd: `copy .env.example .env`)*
+
+Update the values inside `.env` (such as changing the Database URL to point to SQLite or your MySQL Server instance).
+
+### Step 6: Start Server
+Run the FastAPI development server:
+```bash
+uvicorn app.main:app --port 8000 --reload
+```
+On startup, StockMate automatically sets up all database tables and seeds default user roles.
+
+### Step 7: Open Browser
+Navigate to: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+Log in with the default credentials:
+* **Owner Dashboard**: `owner@stockmate.com` (password: `owner123`)
+* **Employee Dashboard**: `employee@stockmate.com` (password: `employee123`)
+
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file in the project root directory:
+
 ```env
-APP_ENV=development
-SECRET_KEY=yoursecretkey123!@#
+# Application Settings
+APP_ENV=development # Options: development, production
+SECRET_KEY=yoursecretkey123!@# # Used for signing cookie sessions
+
+# Database Configuration
+# For SQLite (default development):
 DATABASE_URL=sqlite:///./stockmate.db
-```
 
-### 4. Run Startup Migration & Seeding
-Start the developmental Uvicorn server:
-```bash
-uvicorn app.main:app --port 8000
-```
-On application startup, FastAPI will automatically generate all relational tables and seed default credentials:
-- **Owner Account**: `owner@stockmate.com` (password: `owner123`)
-- **Employee Account**: `employee@stockmate.com` (password: `employee123`)
-
----
-
-## 🧪 Running Automated Tests
-
-The testing suite contains 9 test cases covering authentication cookies, CRUD boundary access restrictions, expiry property logic, customer registers, and transaction rollback checking. Run the tests via:
-```bash
-python -m pytest
+# For MySQL (production):
+# DATABASE_URL=mysql+pymysql://username:password@localhost:3306/stockmate_db
 ```
 
 ---
 
-## ☁️ Production Deployment (Railway)
+## 📖 API Documentation
 
-StockMate is fully production-ready and configured for deployment on [Railway](https://railway.app):
+StockMate exposes standard OpenAPI documentation, allowing developers to explore and interact with backend REST APIs:
 
-1. **Procfile**: Tells Railway to spin up Uvicorn binding to `$PORT`:
+* **Interactive Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* **Alternative ReDoc UI**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+## ☁️ Deployment
+
+### Deploying to Railway
+
+StockMate is pre-configured for instant deployment on [Railway](https://railway.app):
+
+1. **Procfile**: Tells Railway to launch Uvicorn and bind to the correct host and port:
    ```text
    web: uvicorn app.main:app --host 0.0.0.0 --port $PORT
    ```
-2. **Environment Variables**: In the Railway dashboard settings, add:
-   - `APP_ENV` = `production`
-   - `SECRET_KEY` = `[RandomCryptographicString]`
-   - `DATABASE_URL` = `[YourProductionDatabaseConnectionString]` *(Supports both SQLite disk mounts or MySQL databases)*
+2. **Environment Configuration**: Add these variables in the Railway console:
+   * `APP_ENV` = `production`
+   * `SECRET_KEY` = `[YourRandomCryptographicKeyString]`
+   * `DATABASE_URL` = `[YourProductionMySQLConnectionString]`
+3. **Database Migrations**: Database tables are initialized automatically on application startup.
 
 ---
 
-## 📖 Application Sections Guide
+## 🔮 Future Improvements
 
-This section describes every screen and module available inside StockMate, from the perspective of each user role.
-
-> **Legend**:  🔵 = Owner Only &nbsp;&nbsp; 🟢 = Both Roles
-
----
-
-### 🔐 Login Page — `/auth/login`
-🟢 **Accessible by: Owner & Employee**
-
-The entry point of the application. Users provide their registered email and password. On successful authentication, a secure HTTP-only cookie session is created and the user is redirected to their role-specific dashboard.
-
-- Invalid credentials show a flash error banner.
-- Logout clears the session cookie and redirects back to the login screen.
+Here is the development roadmap for future releases of StockMate:
+* 🔍 **Barcode Scanner Integration** – Scan item barcodes directly via browser camera.
+* 📱 **QR Codes on Invoices** – Render payment QR codes on dynamic invoices.
+* ✉️ **Email Invoices** – E-mail PDF invoices to customers automatically.
+* 💬 **WhatsApp Invoices** – Send digital invoice receipts directly to WhatsApp.
+* 🏢 **Multi-Store Management** – Manage inventory across multiple stores.
+* 🚚 **Warehouse Transfers** – Coordinate stock movements between warehouse units.
+* 📱 **Native Mobile App** – Develop a companion app for inventory checks on the go.
+* 🤖 **AI Demand Forecasting** – Predict restocking requirements based on sales trends.
 
 ---
 
-### 🏠 Owner Dashboard — `/owner/dashboard`
-🔵 **Accessible by: Owner only**
+## 🎯 Why This Project
 
-The owner's central command center, packed with live business intelligence:
+This project was built to demonstrate proficiency in core web backend concepts:
+* **REST APIs**: Designed using clean HTTP methods and structured JSON payloads.
+* **Authentication & Authorization**: Handled via HTTP-only cookie sessions and JWT parsing.
+* **Database Design**: Structured relational schema with database-level indexes and atomic operations.
+* **Business Logic**: Real-world operations like cost accounting, tax collection, and product life-cycle alerts.
+* **Data Validations**: Strict client/server validation using Pydantic.
+* **Reporting**: Programmatic file generation (PDF & CSV streams) built dynamically.
 
-| Widget | Description |
-|--------|-------------|
-| **Total Revenue** | Sum of all completed sale amounts across all time |
-| **Today's Revenue** | Sum of today's invoices only |
-| **Total Profit** | Net profit = selling price − cost price across all sales |
-| **Today's Profit** | Net profit earned today |
-| **Total Bills** | Count of all invoices ever processed |
-| **Today's Bills** | Count of invoices raised today |
-| **Low Stock Alerts** | Count of products whose stock has dropped below their minimum threshold |
-| **Expiring Soon** | Count of products expiring within the next 30 days |
-
-**Interactive Charts (Chart.js)**:
-- 📊 **Daily Sales Bar Chart** — Volume of bills raised per day for the past 7 days.
-- 📈 **Monthly Revenue Line Chart** — Revenue trend across the last 6 months.
-- 🥧 **Top Products Doughnut** — Contribution of each product to total sales quantity.
-- 🍩 **Category Revenue Doughnut** — Revenue distribution by product category.
+It showcases the ability to design, build, and deploy production-ready systems using the Python ecosystem.
 
 ---
 
-### 👤 Employee Dashboard — `/employee/dashboard`
-🟢 **Accessible by: Employee (Owner sees the Owner Dashboard instead)**
+## ✍️ Author
 
-A focused, action-oriented screen showing only the information relevant to a counter employee:
-
-| Widget | Description |
-|--------|-------------|
-| **Today's Sales (Personal)** | Total invoice revenue processed by this employee today |
-| **Total Customers** | Count of all registered customers in the system |
-| **Available Product Types** | Count of distinct products currently in the inventory catalog |
-
-**Quick Action Buttons**:
-- 🔍 Search Products & Inventory
-- 👥 Register New Customer
-- 🛒 Create Invoice / Sale
-
-**Recent Invoices Table**: Shows the last 10 invoices processed by this employee with invoice number, customer name, date, and total.
+**YOUR_NAME**
+* **GitHub**: [@YOUR_GITHUB_USERNAME](https://github.com/YOUR_GITHUB_USERNAME)
+* **LinkedIn**: [YOUR_LINKEDIN_URL](https://linkedin.com/in/YOUR_LINKEDIN_URL)
+* **Email**: `YOUR_EMAIL@example.com`
+* **Portfolio**: [YOUR_PORTFOLIO_URL](https://YOUR_PORTFOLIO_URL)
 
 ---
 
-### 📦 Products — `/products`
-🟢 **Accessible by: Owner & Employee**
+## 📄 License
 
-The full inventory catalog listing every product with real-time status indicators.
-
-**Columns shown**:
-- Product Name, Category, Cost Price, Selling Price, Stock Quantity, Minimum Stock, Manufacturing Date, Expiry Date
-
-**Status Badges**:
-- 🔴 **Expired** — Product's expiry date has passed.
-- 🟠 **Expiring Soon** — Expires within 30 days.
-- 🟡 **Low Stock** — Current stock is below the minimum threshold.
-- 🟢 **In Stock** — All good.
-
-**Owner-only controls**:
-- ➕ Add New Product (modal form with category, pricing, and date fields).
-- ✏️ Edit Product (inline modal, pre-filled with existing values).
-- 🗑️ Delete Product (with confirmation).
-
-**Search & Filter**: Filter by name keyword, category, and stock status simultaneously.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-### 🏷️ Categories — `/categories`
-🟢 **Accessible by: Owner & Employee**
+## ⭐ Support
 
-Manages the product classification system. All products must belong to a category.
-
-**Table shows**: Category Name, Number of Products in that category, Date Created.
-
-**Owner-only controls**:
-- ➕ Add New Category (modal).
-- ✏️ Edit Category Name (inline modal).
-- 🗑️ Delete Category — Warns if products exist under that category before proceeding.
-
----
-
-### 👥 Customers — `/customers`
-🟢 **Accessible by: Owner & Employee**
-
-The complete customer registry used when creating invoices.
-
-**Table shows**: Customer Name, Phone, Email, Address, Registration Date, Number of Purchases.
-
-**Controls (both roles)**:
-- ➕ Register New Customer (modal with name, phone, email, address).
-- ✏️ Edit Customer Details (inline modal).
-
-**Owner-only controls**:
-- 🗑️ Delete Customer (blocked if customer has existing invoices).
-
-**Search**: Filter by customer name or phone number.
-
----
-
-### 🏭 Suppliers — `/suppliers`
-🟢 **Accessible by: Owner & Employee (read-only for Employees)**
-
-The supplier/vendor directory used when creating purchase orders.
-
-**Table shows**: Supplier Name, Contact Person, Phone, Email, Address, Date Registered.
-
-**Owner-only controls**:
-- ➕ Register Supplier (modal).
-- ✏️ Edit Supplier Details.
-- 🗑️ Delete Supplier.
-
-Employees can view the supplier list but cannot add, edit, or delete records.
-
----
-
-### 🛒 New Sale (Invoice Builder) — `/sales/create`
-🟢 **Accessible by: Owner & Employee**
-
-An interactive multi-item invoice builder — the primary point-of-sale screen.
-
-**Workflow**:
-1. Select a registered **Customer** from the dropdown.
-2. Add products by choosing a product and entering quantity.
-3. The form dynamically calculates **line totals** and **grand total** in real time.
-4. Submit to finalize — stock is deducted atomically; a unique invoice number is assigned.
-
-**Safety features**:
-- Prevents selling more units than currently in stock.
-- If any single item fails the stock check, the entire invoice is rolled back cleanly.
-- Expired products are flagged with a warning.
-
----
-
-### 📋 Sales History — `/sales`
-🟢 **Accessible by: Owner & Employee**
-
-A paginated, searchable ledger of all completed invoices.
-
-**Columns**: Invoice #, Customer Name, Employee Name, Date/Time, Total Amount, Total Profit.
-
-**Actions**:
-- 🔍 **View Details** — Expands a modal showing every line item (product, quantity, unit price, subtotal).
-- 📄 **Download PDF** — Streams a printable invoice PDF with company branding via ReportLab.
-
-**Owner extras**: Sees all invoices from all employees. Can filter by employee name. Can also delete an invoice record.
-
-**Employee view**: Sees only their own invoices by default (My Sales tab).
-
----
-
-### 📦 Purchase Orders — `/purchases`
-🟢 **Accessible by: Owner & Employee**
-
-Tracks all inbound restocking orders placed with suppliers.
-
-**Status Badges**:
-- 🟡 **Pending** — Draft order submitted, awaiting Owner approval.
-- 🟢 **Completed / Received** — Owner has approved; stock has been replenished.
-
-**Table shows**: PO #, Supplier, Total Cost, Status, Created By, Date.
-
-**Actions**:
-- 🔍 **Details** — Modal showing each ordered product, quantity, and unit cost.
-- ✅ **Approve** *(Owner only)* — Marks order as Completed, adds purchased quantities to product stock, and updates product cost price to the latest procurement cost.
-- 🗑️ **Delete** *(Owner only)* — Removes a Pending draft.
-
----
-
-### 🛍️ New Purchase Order — `/purchases/create`
-🟢 **Accessible by: Owner & Employee**
-
-An interactive procurement form for building a restocking draft.
-
-**Workflow**:
-1. Select a **Supplier** from the registered supplier list.
-2. Add line items: choose a product, set quantity, and optionally override the unit cost.
-3. The form shows a running total of the procurement cost.
-4. Submit to save as a **Pending** draft — no stock is affected until an Owner approves.
-
----
-
-### 📊 Reports & Analytics — `/reports`
-🔵 **Accessible by: Owner only**
-
-A dedicated analytical dashboard for business intelligence reporting.
-
-**Date Filter Presets**: Today, Yesterday, Last 7 Days, This Month, This Year, Custom Range.
-
-**Metrics shown**:
-- Total Revenue, Total Profit, Total Bills, Average Bill Value for the selected period.
-- Top 5 best-selling products by quantity.
-- Revenue and profit breakdown by category.
-
-**Export Options**:
-- 📥 **Download Products CSV** — Full inventory catalog as a `.csv` file.
-- 📥 **Download Customers CSV** — Complete customer registry as a `.csv` file.
-- 📥 **Download Sales CSV** — All invoices with line-item detail as a `.csv` file.
-
----
-
-### 👨‍💼 Employee Management — `/employees`
-🔵 **Accessible by: Owner only**
-
-Manage the staff accounts who operate the system.
-
-**Table shows**: Full Name, Email, Role Badge, Date Created.
-
-**Controls**:
-- ➕ Add New Employee (modal — sets name, email, password, role).
-- ✏️ Edit Employee (inline modal).
-- 🗑️ Delete Employee — Owner cannot delete their own account (self-deletion lock).
-
----
-
-### 📜 Audit Logs — `/audit-logs`
-🔵 **Accessible by: Owner only**
-
-A tamper-evident, chronological log of every significant action performed in the system.
-
-**Columns**: Timestamp, User (who performed the action), Action Code, Details Description, IP Address.
-
-**Action Codes include**:
-`LOGIN`, `LOGOUT`, `PRODUCT_CREATE`, `PRODUCT_UPDATE`, `PRODUCT_DELETE`, `CATEGORY_CREATE`, `CATEGORY_DELETE`, `CUSTOMER_CREATE`, `CUSTOMER_UPDATE`, `CUSTOMER_DELETE`, `SALE_CREATE`, `SALE_DELETE`, `EMPLOYEE_CREATE`, `EMPLOYEE_UPDATE`, `EMPLOYEE_DELETE`, `PURCHASE_COMPLETE`, `SUPPLIER_CREATE`, `SUPPLIER_UPDATE`, `SUPPLIER_DELETE`
-
-**Filters**: Filter by username or action type using dropdowns. Supports pagination for large log histories.
-
+If you find this project useful or used it for learning, please consider leaving a ⭐ on GitHub! Your support helps make the project more visible.
