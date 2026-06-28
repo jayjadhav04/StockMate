@@ -1,0 +1,184 @@
+/* StockMate - Custom Theme & UI Enhancements Stylesheet */
+
+/* Contrast Fixes for Dark Mode */
+body:not(.light-theme) .table {
+    --bs-table-color: #f8fafc !important;
+    --bs-table-hover-color: #f8fafc !important;
+    color: #f8fafc !important;
+}
+
+body:not(.light-theme) .table td {
+    color: #f8fafc !important;
+}
+
+body:not(.light-theme) .table td .text-muted,
+body:not(.light-theme) .text-muted {
+    color: #94a3b8 !important;
+}
+
+body:not(.light-theme) .form-control,
+body:not(.light-theme) .form-select,
+body:not(.light-theme) input,
+body:not(.light-theme) select,
+body:not(.light-theme) textarea {
+    color: #f8fafc !important;
+}
+
+body:not(.light-theme) .form-control::placeholder,
+body:not(.light-theme) input::placeholder {
+    color: #94a3b8 !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Sidebar scrolling & transition rules */
+.sidebar {
+    transition: transform 0.3s ease, margin-left 0.3s ease;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-260px);
+}
+
+.main-wrapper {
+    transition: margin-left 0.3s ease;
+}
+
+.main-wrapper.full-screen {
+    margin-left: 0 !important;
+}
+
+/* Light Theme Variables & Rules */
+body.light-theme {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    --bg-dark: #ffffff;
+    --bg-card: #ffffff;
+    --text-muted: #475569;
+}
+
+body.light-theme .sidebar {
+    background-color: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+
+body.light-theme .sidebar-brand {
+    background: linear-gradient(45deg, #2563eb, #7c3aed) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.light-theme .nav-link {
+    color: #475569 !important;
+}
+
+body.light-theme .nav-link:hover, 
+body.light-theme .nav-link.active {
+    color: #2563eb !important;
+    background-color: #f0f6ff !important;
+}
+
+body.light-theme .nav-link.active {
+    color: #2563eb !important;
+    font-weight: 600;
+}
+
+body.light-theme .navbar-top {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    backdrop-filter: blur(8px);
+}
+
+body.light-theme .card-stat {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+    color: #0f172a !important;
+}
+
+body.light-theme .table {
+    color: #0f172a !important;
+}
+
+body.light-theme .table th {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    border-color: #e2e8f0 !important;
+}
+
+body.light-theme .table td {
+    border-color: #f1f5f9 !important;
+    color: #334155 !important;
+}
+
+body.light-theme .form-control, 
+body.light-theme .form-select {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+body.light-theme .form-control:focus, 
+body.light-theme .form-select:focus {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+body.light-theme .modal-content {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+}
+
+body.light-theme .modal-header, 
+body.light-theme .modal-footer {
+    border-color: #e2e8f0 !important;
+}
+
+body.light-theme .btn-outline-light {
+    color: #475569 !important;
+    border-color: #cbd5e1 !important;
+}
+
+body.light-theme .btn-outline-light:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+body.light-theme .alert-info {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+}
+
+body.light-theme .badge-role {
+    background-color: rgba(37, 99, 235, 0.1) !important;
+    color: #2563eb !important;
+    border: 1px solid rgba(37, 99, 235, 0.2) !important;
+}
+
+body.light-theme .badge-owner {
+    background-color: rgba(124, 58, 237, 0.1) !important;
+    color: #7c3aed !important;
+    border: 1px solid rgba(124, 58, 237, 0.2) !important;
+}
+
+body.light-theme hr {
+    border-color: rgba(0, 0, 0, 0.08) !important;
+}

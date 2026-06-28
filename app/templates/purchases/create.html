@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMate - New Purchase Order</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom Theme Styles & Scripts -->
+    <link rel="stylesheet" href="/static/css/theme.css?v=1.2">
+    <script src="/static/js/theme.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary-blue: #3b82f6;
+            --text-muted: #94a3b8;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+        /* Sidebar styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 1.5rem 1rem;
+        }
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        .nav-link {
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff;
+            background-color: rgba(59, 130, 246, 0.15);
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        /* Main content layout */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-top {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-area {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+        .card-stat {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+        .table {
+            color: #f8fafc;
+        }
+        .table th {
+            background-color: rgba(15, 23, 42, 0.6);
+            color: #cbd5e1;
+            border-color: rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+        }
+        .table td {
+            background-color: transparent;
+            border-color: rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        .form-control, .form-select {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(15, 23, 42, 0.8);
+            color: #f8fafc;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .badge-role {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        .badge-owner {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-box-seam-fill"></i> StockMate
+        </div>
+        <nav class="nav flex-column">
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/owner/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% else %}
+            <a class="nav-link" href="/employee/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% endif %}
+            <a class="nav-link" href="/products"><i class="bi bi-grid"></i> Products</a>
+            <a class="nav-link" href="/categories"><i class="bi bi-tags"></i> Categories</a>
+            <a class="nav-link" href="/customers"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/suppliers"><i class="bi bi-truck"></i> Suppliers</a>
+            
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/employees"><i class="bi bi-person-badge"></i> Employees</a>
+            <a class="nav-link" href="/sales"><i class="bi bi-graph-up"></i> Sales History</a>
+            <a class="nav-link active" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            <a class="nav-link" href="/reports"><i class="bi bi-bar-chart-line"></i> Reports</a>
+            <a class="nav-link" href="/audit-logs"><i class="bi bi-shield-check"></i> Audit Logs</a>
+            {% else %}
+            <a class="nav-link" href="/sales/create"><i class="bi bi-cart-plus"></i> New Sale</a>
+            <a class="nav-link" href="/sales"><i class="bi bi-receipt-cutoff"></i> Personal Sales</a>
+            <a class="nav-link active" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            {% endif %}
+            <hr style="border-color: rgba(255, 255, 255, 0.15);">
+            <a class="nav-link text-danger" href="/auth/logout"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        
+        <!-- Header / Top Navbar -->
+        <header class="navbar-top">
+            <h4 class="mb-0">New Purchase Order</h4>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="fw-bold">{{ user.full_name }}</div>
+                    <span class="badge-role {% if user.role == 'Owner' %}badge-owner{% endif %}">{{ user.role }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- JavaScript Alert Banner -->
+            <div id="alertBanner" class="alert d-none border-0" role="alert"></div>
+
+            <div class="row g-4">
+                
+                <!-- Builder Panel Left -->
+                <div class="col-lg-5">
+                    <div class="card-stat">
+                        <h5 class="mb-3 text-info"><i class="bi bi-cart-plus me-2"></i>Order Configurations</h5>
+                        
+                        <!-- Supplier Select -->
+                        <div class="mb-3">
+                            <label for="supplierSelect" class="form-label">Procure From (Supplier) *</label>
+                            <select class="form-select" id="supplierSelect">
+                                <option value="" disabled selected>-- Select Supplier --</option>
+                                {% for sup in suppliers %}
+                                <option value="{{ sup.id }}">{{ sup.supplier_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <hr style="border-color: rgba(255,255,255,0.08);">
+                        
+                        <h6 class="mb-3 text-white"><i class="bi bi-plus-circle me-2"></i>Add Line Item</h6>
+                        
+                        <!-- Product Select -->
+                        <div class="mb-3">
+                            <label for="productSelect" class="form-label">Select Product *</label>
+                            <select class="form-select" id="productSelect">
+                                <option value="" disabled selected>-- Select Product --</option>
+                                {% for prod in products %}
+                                <option value="{{ prod.id }}" data-cost="{{ prod.cost_price }}">
+                                    {{ prod.product_name }} (Current Cost: ₹{{ "%.2f" | format(prod.cost_price) }}, Stock: {{ prod.stock_quantity }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Cost & Quantity -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="quantityInput" class="form-label">Quantity *</label>
+                                <input type="number" class="form-control" id="quantityInput" min="1" value="10">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="costInput" class="form-label">Purchase Unit Cost *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-white">₹</span>
+                                    <input type="number" class="form-control" id="costInput" min="0.01" step="0.01" placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-outline-info w-100" id="btnAddToOrder">
+                            <i class="bi bi-plus-lg me-1"></i> Add Product Line
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Receipt Panel Right -->
+                <div class="col-lg-7">
+                    <div class="card-stat d-flex flex-column h-100">
+                        <h5 class="mb-3 text-info"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Procurement Items list</h5>
+                        
+                        <div class="table-responsive flex-grow-1" style="min-height: 250px;">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th style="text-align: right;">Quantity</th>
+                                        <th style="text-align: right;">Cost Price</th>
+                                        <th style="text-align: right;">Total</th>
+                                        <th style="text-align: center; width: 10%;">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderItemsTableBody">
+                                    <!-- Dynamic rows injected -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Totals Section -->
+                        <div class="mt-4 pt-3 border-top border-secondary">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h4 class="mb-0">Estimated Grand Total:</h4>
+                                <h3 class="mb-0 text-success fw-bold font-monospace" id="grandTotalLabel">₹0.00</h3>
+                            </div>
+                            
+                            <button class="btn btn-primary w-100 py-2 fw-bold" id="btnSubmitOrder" disabled>
+                                <i class="bi bi-send-check-fill me-1"></i> Submit Purchase Order Draft
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const orderItems = [];
+
+        // Elements
+        const productSelect = document.getElementById('productSelect');
+        const quantityInput = document.getElementById('quantityInput');
+        const costInput = document.getElementById('costInput');
+        const btnAddToOrder = document.getElementById('btnAddToOrder');
+        const orderItemsTableBody = document.getElementById('orderItemsTableBody');
+        const grandTotalLabel = document.getElementById('grandTotalLabel');
+        const btnSubmitOrder = document.getElementById('btnSubmitOrder');
+        const supplierSelect = document.getElementById('supplierSelect');
+        const alertBanner = document.getElementById('alertBanner');
+
+        // Populate unit cost on select
+        productSelect.addEventListener('change', function() {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const currentCost = selectedOption.getAttribute('data-cost');
+            if (currentCost) {
+                costInput.value = parseFloat(currentCost).toFixed(2);
+            }
+        });
+
+        // Add to Order List
+        btnAddToOrder.addEventListener('click', function() {
+            const supplierId = supplierSelect.value;
+            if (!supplierId) {
+                showAlert('danger', 'Please select a supplier first.');
+                return;
+            }
+
+            const productId = productSelect.value;
+            const productText = productSelect.options[productSelect.selectedIndex].text;
+            const productName = productText.split('(')[0].trim();
+            const qty = parseInt(quantityInput.value);
+            const cost = parseFloat(costInput.value);
+
+            if (!productId) {
+                showAlert('danger', 'Please select a product.');
+                return;
+            }
+            if (isNaN(qty) || qty <= 0) {
+                showAlert('danger', 'Quantity must be greater than 0.');
+                return;
+            }
+            if (isNaN(cost) || cost <= 0) {
+                showAlert('danger', 'Unit cost must be greater than 0.');
+                return;
+            }
+
+            // Check if product already added
+            const existingIndex = orderItems.findIndex(item => item.product_id === parseInt(productId));
+            if (existingIndex > -1) {
+                // Accumulate quantity and update cost price to the new cost price
+                orderItems[existingIndex].quantity += qty;
+                orderItems[existingIndex].cost_price = cost;
+                orderItems[existingIndex].line_total = orderItems[existingIndex].quantity * cost;
+            } else {
+                orderItems.push({
+                    product_id: parseInt(productId),
+                    product_name: productName,
+                    quantity: qty,
+                    cost_price: cost,
+                    line_total: qty * cost
+                });
+            }
+
+            // Clear inputs
+            productSelect.selectedIndex = 0;
+            quantityInput.value = '10';
+            costInput.value = '';
+
+            renderTable();
+            showAlert('success', 'Product added to procurement items list.');
+        });
+
+        function renderTable() {
+            orderItemsTableBody.innerHTML = '';
+            let grandTotal = 0.0;
+
+            if (orderItems.length === 0) {
+                orderItemsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted p-4">No added product items yet.</td>
+                    </tr>
+                `;
+                btnSubmitOrder.disabled = true;
+                grandTotalLabel.textContent = '₹0.00';
+                return;
+            }
+
+            orderItems.forEach((item, index) => {
+                grandTotal += item.line_total;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold">${item.product_name}</td>
+                    <td style="text-align: right;">${item.quantity}</td>
+                    <td style="text-align: right;">$${item.cost_price.toFixed(2)}</td>
+                    <td style="text-align: right;" class="text-success fw-bold">$${item.line_total.toFixed(2)}</td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeLineItem(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                orderItemsTableBody.appendChild(tr);
+            });
+
+            grandTotalLabel.textContent = `₹${grandTotal.toFixed(2)}`;
+            btnSubmitOrder.disabled = false;
+        }
+
+        window.removeLineItem = function(index) {
+            orderItems.splice(index, 1);
+            renderTable();
+            showAlert('warning', 'Product line item removed.');
+        };
+
+        // Submit to API
+        btnSubmitOrder.addEventListener('click', async function() {
+            const supplierId = supplierSelect.value;
+            if (!supplierId || orderItems.length === 0) {
+                showAlert('danger', 'Please verify your supplier selection and item entries.');
+                return;
+            }
+
+            btnSubmitOrder.disabled = true;
+            btnSubmitOrder.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Submitting...';
+
+            const payload = {
+                supplier_id: parseInt(supplierId),
+                items: orderItems.map(item => ({
+                    product_id: item.product_id,
+                    quantity: item.quantity,
+                    cost_price: item.cost_price
+                }))
+            };
+
+            try {
+                const response = await fetch('/purchases/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = data.redirect;
+                } else {
+                    const err = await response.json();
+                    showAlert('danger', `Error: ${err.detail || 'Failed to submit order'}`);
+                    btnSubmitOrder.disabled = false;
+                    btnSubmitOrder.innerHTML = '<i class="bi bi-send-check-fill me-1"></i> Submit Purchase Order Draft';
+                }
+            } catch (error) {
+                showAlert('danger', 'Network connection issue.');
+                btnSubmitOrder.disabled = false;
+                btnSubmitOrder.innerHTML = '<i class="bi bi-send-check-fill me-1"></i> Submit Purchase Order Draft';
+            }
+        });
+
+        function showAlert(type, message) {
+            alertBanner.className = `alert alert-${type} alert-dismissible fade show border-0`;
+            alertBanner.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}-fill me-2"></i>${message}`;
+            alertBanner.classList.remove('d-none');
+            setTimeout(() => {
+                alertBanner.classList.add('d-none');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

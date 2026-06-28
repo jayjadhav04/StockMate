@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMate - New Invoice</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom Theme Styles & Scripts -->
+    <link rel="stylesheet" href="/static/css/theme.css?v=1.2">
+    <script src="/static/js/theme.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary-blue: #3b82f6;
+            --text-muted: #94a3b8;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+        /* Sidebar styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 1.5rem 1rem;
+        }
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        .nav-link {
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff;
+            background-color: rgba(59, 130, 246, 0.15);
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        /* Main content layout */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-top {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-area {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+        .card-stat {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            margin-bottom: 2rem;
+        }
+        .form-select, .form-control {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+            padding: 0.65rem 0.85rem;
+        }
+        .form-select:focus, .form-control:focus {
+            background-color: rgba(15, 23, 42, 0.8);
+            color: #f8fafc;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .form-label {
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        .badge-role {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        .badge-owner {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .table {
+            color: #f8fafc;
+        }
+        .table th {
+            background-color: rgba(15, 23, 42, 0.6);
+            color: #cbd5e1;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .table td {
+            background-color: transparent;
+            border-color: rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-box-seam-fill"></i> StockMate
+        </div>
+        <nav class="nav flex-column">
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/owner/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% else %}
+            <a class="nav-link" href="/employee/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% endif %}
+            <a class="nav-link" href="/products"><i class="bi bi-grid"></i> Products</a>
+            <a class="nav-link" href="/categories"><i class="bi bi-tags"></i> Categories</a>
+            <a class="nav-link" href="/customers"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/suppliers"><i class="bi bi-truck"></i> Suppliers</a>
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/employees"><i class="bi bi-person-badge"></i> Employees</a>
+            <a class="nav-link" href="/sales"><i class="bi bi-graph-up"></i> Sales History</a>
+            <a class="nav-link" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            <a class="nav-link" href="/reports"><i class="bi bi-bar-chart-line"></i> Reports</a>
+            <a class="nav-link" href="/audit-logs"><i class="bi bi-shield-check"></i> Audit Logs</a>
+            {% else %}
+            <a class="nav-link active" href="/sales/create"><i class="bi bi-cart-plus"></i> New Sale</a>
+            <a class="nav-link" href="/sales"><i class="bi bi-receipt-cutoff"></i> Personal Sales</a>
+            <a class="nav-link" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            {% endif %}
+            <hr style="border-color: rgba(255, 255, 255, 0.15);">
+            <a class="nav-link text-danger" href="/auth/logout"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        
+        <!-- Header / Top Navbar -->
+        <header class="navbar-top">
+            <h4 class="mb-0">Create New Invoice</h4>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="fw-bold">{{ user.full_name }}</div>
+                    <span class="badge-role {% if user.role == 'Owner' %}badge-owner{% endif %}">{{ user.role }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- Alert Display -->
+            <div id="errorAlert" class="alert alert-danger d-none rounded-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="errorMessage"></span>
+            </div>
+
+            <div class="row g-4">
+                <!-- Left Column: Form & Add Item -->
+                <div class="col-lg-5">
+                    <div class="card-stat">
+                        <h5 class="mb-4 text-primary"><i class="bi bi-cart-fill me-2"></i>Invoice Details</h5>
+                        
+                        <!-- Customer Selection -->
+                        <div class="mb-4">
+                            <label for="customer_select" class="form-label">Select Customer *</label>
+                            <select class="form-select" id="customer_select" required>
+                                <option value="" disabled selected>-- Choose Customer --</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.customer_name }} ({{ customer.phone }})</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text text-muted small mt-1">If the customer is not registered, go to the <a href="/customers" class="text-info">Customers</a> page to register them first.</div>
+                        </div>
+
+                        <hr style="border-color: rgba(255,255,255,0.08);">
+                        <h5 class="my-4 text-primary"><i class="bi bi-bag-plus-fill me-2"></i>Add Line Item</h5>
+
+                        <!-- Product Selection -->
+                        <div class="mb-3">
+                            <label for="product_select" class="form-label">Choose Product *</label>
+                            <select class="form-select" id="product_select">
+                                <option value="" disabled selected>-- Choose Product --</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}" 
+                                        data-name="{{ product.product_name }}"
+                                        data-stock="{{ product.stock_quantity }}"
+                                        data-price="{{ product.cost_price }}"
+                                        data-gst="{{ product.gst_rate }}">
+                                    {{ product.product_name }} (Avail: {{ product.stock_quantity }}, GST: {{ product.gst_rate|int }}%)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+                                <label for="quantity" class="form-label">Quantity *</label>
+                                <input type="number" class="form-control" id="quantity" value="1" min="1">
+                            </div>
+                            <!-- Selling Price -->
+                            <div class="col-md-6">
+                                <label for="selling_price" class="form-label">Selling Price (₹) *</label>
+                                <input type="number" class="form-control" id="selling_price" step="0.01" min="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary w-100" id="addItemBtn">
+                            <i class="bi bi-plus-lg me-1"></i> Add to Invoice
+                        </button>
+
+                        <!-- Payment Method -->
+                        <hr style="border-color: rgba(255,255,255,0.08);">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Payment Method *</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pm_cash" value="Cash" checked>
+                                    <label class="form-check-label" for="pm_cash">💵 Cash</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pm_upi" value="UPI">
+                                    <label class="form-check-label" for="pm_upi">📱 UPI</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pm_card" value="Card">
+                                    <label class="form-check-label" for="pm_card">💳 Card</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Item Table & Totals -->
+                <div class="col-lg-7">
+                    <div class="card-stat h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="mb-4 text-primary"><i class="bi bi-list-stars me-2"></i>Invoice Items</h5>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th style="width: 15%">Qty</th>
+                                            <th style="width: 25%">Selling Price</th>
+                                            <th style="width: 25%">Total</th>
+                                            <th style="width: 10%; text-align: center;">Rem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoiceItemsTableBody">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted p-4" id="emptyRowLabel">
+                                                No items added to invoice yet.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <hr style="border-color: rgba(255,255,255,0.08);">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Subtotal (ex-GST):</span>
+                                <span id="subtotalLabel" class="fw-bold">₹0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">GST:</span>
+                                <span id="gstTotalLabel" class="fw-bold text-warning">₹0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mb-0">Grand Total:</h4>
+                                <h2 class="mb-0 text-primary" id="grandTotalLabel">₹0.00</h2>
+                            </div>
+                            <button type="button" class="btn btn-success w-100 p-3 fw-bold" id="processInvoiceBtn">
+                                <i class="bi bi-check2-all me-1"></i> Process & Save Invoice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Array of items in the current invoice
+        let invoiceItems = [];
+
+        const productSelect = document.getElementById('product_select');
+        const quantityInput = document.getElementById('quantity');
+        const sellingPriceInput = document.getElementById('selling_price');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const invoiceItemsTableBody = document.getElementById('invoiceItemsTableBody');
+        const emptyRowLabel = document.getElementById('emptyRowLabel');
+        const grandTotalLabel = document.getElementById('grandTotalLabel');
+        const subtotalLabel = document.getElementById('subtotalLabel');
+        const gstTotalLabel = document.getElementById('gstTotalLabel');
+        const customerSelect = document.getElementById('customer_select');
+        const processInvoiceBtn = document.getElementById('processInvoiceBtn');
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Automatically populate selling price when product is selected
+        // We set the default selling price equal to cost_price + 20% markup as a default suggestion
+        productSelect.addEventListener('change', function() {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const baseCost = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const suggestedSelling = baseCost * 1.2; // 20% markup default suggestion
+            sellingPriceInput.value = suggestedSelling.toFixed(2);
+        });
+
+        // Add Item Button Click Handler
+        addItemBtn.addEventListener('click', function() {
+            const selectedIdx = productSelect.selectedIndex;
+            if (selectedIdx === 0) {
+                showAlert('Please select a product first.');
+                return;
+            }
+
+            const selectedOption = productSelect.options[selectedIdx];
+            const productId = parseInt(selectedOption.value);
+            const productName = selectedOption.getAttribute('data-name');
+            const availableStock = parseInt(selectedOption.getAttribute('data-stock'));
+            const gstRate = parseFloat(selectedOption.getAttribute('data-gst')) || 0;
+            const quantity = parseInt(quantityInput.value);
+            const sellingPrice = parseFloat(sellingPriceInput.value);
+
+            // Validation checks
+            if (isNaN(quantity) || quantity <= 0) {
+                showAlert('Please enter a valid quantity greater than 0.');
+                return;
+            }
+
+            if (quantity > availableStock) {
+                showAlert(`Cannot add item. Requested quantity (${quantity}) exceeds available stock (${availableStock}) for '${productName}'.`);
+                return;
+            }
+
+            if (isNaN(sellingPrice) || sellingPrice <= 0) {
+                showAlert('Please enter a valid selling price greater than 0.');
+                return;
+            }
+
+            // Check if product already exists in invoice items list
+            const existingIdx = invoiceItems.findIndex(item => item.product_id === productId);
+            if (existingIdx !== -1) {
+                const newQty = invoiceItems[existingIdx].quantity + quantity;
+                if (newQty > availableStock) {
+                    showAlert(`Combined quantity (${newQty}) exceeds available stock (${availableStock}) for '${productName}'.`);
+                    return;
+                }
+                invoiceItems[existingIdx].quantity = newQty;
+                invoiceItems[existingIdx].selling_price = sellingPrice;
+                invoiceItems[existingIdx].line_total = newQty * sellingPrice;
+                invoiceItems[existingIdx].gst_rate = gstRate;
+            } else {
+                invoiceItems.push({
+                    product_id: productId,
+                    product_name: productName,
+                    quantity: quantity,
+                    selling_price: sellingPrice,
+                    gst_rate: gstRate,
+                    line_total: quantity * sellingPrice
+                });
+            }
+
+            // Refresh table and UI
+            renderItemsTable();
+            clearItemInputs();
+            hideAlert();
+        });
+
+        function renderItemsTable() {
+            if (invoiceItems.length === 0) {
+                invoiceItemsTableBody.innerHTML = '';
+                invoiceItemsTableBody.appendChild(emptyRowLabel);
+                subtotalLabel.textContent = '₹0.00';
+                gstTotalLabel.textContent = '₹0.00';
+                grandTotalLabel.textContent = '₹0.00';
+                return;
+            }
+
+            invoiceItemsTableBody.innerHTML = '';
+            let subtotal = 0;
+            let totalGst = 0;
+
+            invoiceItems.forEach((item, index) => {
+                const gst = item.line_total * (item.gst_rate / 100);
+                subtotal += item.line_total;
+                totalGst += gst;
+
+                const tr = document.createElement('tr');
+
+                const tdName = document.createElement('td');
+                tdName.innerHTML = `<strong>${item.product_name}</strong><br><small class="text-muted">GST: ${item.gst_rate}%</small>`;
+
+                const tdQty = document.createElement('td');
+                tdQty.textContent = item.quantity;
+
+                const tdPrice = document.createElement('td');
+                tdPrice.textContent = `₹${item.selling_price.toFixed(2)}`;
+
+                const tdTotal = document.createElement('td');
+                tdTotal.textContent = `₹${item.line_total.toFixed(2)}`;
+                tdTotal.classList.add('fw-bold');
+
+                const tdAction = document.createElement('td');
+                tdAction.style.textAlign = 'center';
+                tdAction.innerHTML = `<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeItem(${index})"><i class="bi bi-trash"></i></button>`;
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdQty);
+                tr.appendChild(tdPrice);
+                tr.appendChild(tdTotal);
+                tr.appendChild(tdAction);
+
+                invoiceItemsTableBody.appendChild(tr);
+            });
+
+            subtotalLabel.textContent = `₹${subtotal.toFixed(2)}`;
+            gstTotalLabel.textContent = `₹${totalGst.toFixed(2)}`;
+            grandTotalLabel.textContent = `₹${(subtotal + totalGst).toFixed(2)}`;
+        }
+
+        // Remove item from invoice
+        window.removeItem = function(index) {
+            invoiceItems.splice(index, 1);
+            renderItemsTable();
+        };
+
+        function clearItemInputs() {
+            productSelect.selectedIndex = 0;
+            quantityInput.value = 1;
+            sellingPriceInput.value = '';
+        }
+
+        function showAlert(msg) {
+            errorMessage.textContent = msg;
+            errorAlert.classList.remove('d-none');
+            // Scroll to top of content area to view error
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideAlert() {
+            errorAlert.classList.add('d-none');
+        }
+
+        // Submit Invoice to Backend
+        processInvoiceBtn.addEventListener('click', function() {
+            const customerId = parseInt(customerSelect.value);
+            if (isNaN(customerId)) {
+                showAlert('Please select a customer.');
+                return;
+            }
+
+            if (invoiceItems.length === 0) {
+                showAlert('Cannot process empty invoice. Add at least one item first.');
+                return;
+            }
+
+            // Construct payload matching SaleCreate schema
+            const selectedPayment = document.querySelector('input[name="payment_method"]:checked');
+            const paymentMethod = selectedPayment ? selectedPayment.value : 'Cash';
+
+            const payload = {
+                customer_id: customerId,
+                payment_method: paymentMethod,
+                items: invoiceItems.map(item => ({
+                    product_id: item.product_id,
+                    quantity: item.quantity,
+                    selling_price: item.selling_price,
+                    gst_rate: item.gst_rate
+                }))
+            };
+
+            // Send JSON POST request to server
+            processInvoiceBtn.disabled = true;
+            processInvoiceBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing Invoice...`;
+
+            fetch('/sales/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'An error occurred while saving the invoice.');
+                }
+                return data;
+            })
+            .then(data => {
+                // Successful invoice process
+                window.location.href = data.redirect;
+            })
+            .catch(error => {
+                showAlert(error.message);
+                processInvoiceBtn.disabled = false;
+                processInvoiceBtn.innerHTML = `<i class="bi bi-check2-all me-1"></i> Process & Save Invoice`;
+            });
+        });
+    </script>
+</body>
+</html>

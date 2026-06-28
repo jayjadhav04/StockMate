@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMate - Sales History</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom Theme Styles & Scripts -->
+    <link class="theme-style" rel="stylesheet" href="/static/css/theme.css?v=1.2">
+    <script src="/static/js/theme.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary-blue: #3b82f6;
+            --text-muted: #94a3b8;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+        /* Sidebar styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 1.5rem 1rem;
+        }
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        .nav-link {
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff;
+            background-color: rgba(59, 130, 246, 0.15);
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        /* Main content layout */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-top {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-area {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+        .card-stat {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+        .table {
+            color: #f8fafc;
+        }
+        .table th {
+            background-color: rgba(15, 23, 42, 0.6);
+            color: #cbd5e1;
+            border-color: rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+        }
+        .table td {
+            background-color: transparent;
+            border-color: rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        .form-control {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+        .form-control:focus {
+            background-color: rgba(15, 23, 42, 0.8);
+            color: #f8fafc;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .badge-role {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        .badge-owner {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .modal-content {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .modal-header, .modal-footer {
+            border-color: rgba(255,255,255,0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-box-seam-fill"></i> StockMate
+        </div>
+        <nav class="nav flex-column">
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/owner/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% else %}
+            <a class="nav-link" href="/employee/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% endif %}
+            <a class="nav-link" href="/products"><i class="bi bi-grid"></i> Products</a>
+            <a class="nav-link" href="/categories"><i class="bi bi-tags"></i> Categories</a>
+            <a class="nav-link" href="/customers"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/suppliers"><i class="bi bi-truck"></i> Suppliers</a>
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/employees"><i class="bi bi-person-badge"></i> Employees</a>
+            <a class="nav-link active" href="/sales"><i class="bi bi-graph-up"></i> Sales History</a>
+            <a class="nav-link" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            <a class="nav-link" href="/reports"><i class="bi bi-bar-chart-line"></i> Reports</a>
+            <a class="nav-link" href="/audit-logs"><i class="bi bi-shield-check"></i> Audit Logs</a>
+            {% else %}
+            <a class="nav-link" href="/sales/create"><i class="bi bi-cart-plus"></i> New Sale</a>
+            <a class="nav-link active" href="/sales"><i class="bi bi-receipt-cutoff"></i> Personal Sales</a>
+            <a class="nav-link" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            {% endif %}
+            <hr style="border-color: rgba(255, 255, 255, 0.15);">
+            <a class="nav-link text-danger" href="/auth/logout"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        
+        <!-- Header / Top Navbar -->
+        <header class="navbar-top">
+            <h4 class="mb-0">{% if user.role == "Owner" %}Sales History{% else %}Personal Sales History{% endif %}</h4>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="fw-bold">{{ user.full_name }}</div>
+                    <span class="badge-role {% if user.role == 'Owner' %}badge-owner{% endif %}">{{ user.role }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- Success/Error Alerts -->
+            {% if success %}
+            <div class="alert alert-success alert-dismissible fade show border-0 bg-success-subtle text-success-emphasis" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ success }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            
+            {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show border-0 bg-danger-subtle text-danger-emphasis" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <div class="card-stat">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                    <!-- Search Form -->
+                    <form action="/sales" method="GET" class="d-flex gap-2 flex-grow-1" style="max-width: 600px;">
+                        <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Search Invoice # or Customer...">
+                        <input type="date" class="form-control" name="date_filter" value="{{ date_filter }}" style="max-width: 180px;">
+                        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                        <a href="/sales" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i></a>
+                    </form>
+
+                    <!-- Create Sale Button -->
+                    <a href="/sales/create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i> New Invoice
+                    </a>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Customer Name</th>
+                                <th>Billed By</th>
+                                <th>Date &amp; Time</th>
+                                <th>Subtotal</th>
+                                {% if user.role == "Owner" %}
+                                <th>Profit</th>
+                                {% endif %}
+                                <th>Payment</th>
+                                <th style="width: 15%; text-align: center;">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if sales %}
+                                {% for sale in sales %}
+                                <tr>
+                                    <td class="fw-bold text-info">{{ sale.invoice_number }}</td>
+                                    <td>{{ sale.customer.customer_name }}</td>
+                                    <td>{{ sale.employee.full_name }}</td>
+                                    <td>{{ sale.sale_date.strftime("%Y-%m-%d %H:%M") }}</td>
+                                    <td class="fw-bold">₹{{ "%.2f"|format(sale.total_amount) }}</td>
+                                    {% if user.role == "Owner" %}
+                                    <td class="fw-bold text-success">₹{{ "%.2f"|format(sale.total_profit) }}</td>
+                                    {% endif %}
+                                    <td>
+                                        {% if sale.payment_method == 'Cash' %}
+                                        <span class="badge bg-success">💵 Cash</span>
+                                        {% elif sale.payment_method == 'UPI' %}
+                                        <span class="badge bg-primary">📱 UPI</span>
+                                        {% else %}
+                                        <span class="badge bg-purple" style="background:#7c3aed;">💳 Card</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button class="btn btn-outline-primary btn-sm" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#invoiceDetailsModal"
+                                                data-id="{{ sale.id }}"
+                                                data-invoice="{{ sale.invoice_number }}"
+                                                data-customer="{{ sale.customer.customer_name }}"
+                                                data-employee="{{ sale.employee.full_name }}"
+                                                data-date="{{ sale.sale_date.strftime('%Y-%m-%d %H:%M') }}"
+                                                data-total="₹{{ '%.2f'|format(sale.total_amount) }}"
+                                                data-items='{{ sale.serialized_items|tojson if sale.serialized_items else "[]" }}'>
+                                            <i class="bi bi-eye"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="{% if user.role == 'Owner' %}8{% else %}7{% endif %}" class="text-center text-muted p-4">
+                                        No invoice records found.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Invoice Details Modal -->
+    <div class="modal fade" id="invoiceDetailsModal" tabindex="-1" aria-labelledby="invoiceDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invoiceDetailsModalLabel">Invoice <span id="modal_invoice_num" class="text-info"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Customer:</strong> <span id="modal_customer_name"></span></p>
+                            <p class="mb-1"><strong>Date Billed:</strong> <span id="modal_date"></span></p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <p class="mb-1"><strong>Billed By:</strong> <span id="modal_employee_name"></span></p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered border-secondary">
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Quantity</th>
+                                    <th>Selling Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modal_items_table_body">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-end mt-3">
+                        <h4>Total Amount: <span id="modal_total_amount" class="text-primary"></span></h4>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="modal_download_btn" href="#" class="btn btn-outline-info"><i class="bi bi-download"></i> Download PDF</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Modal populate logic
+        const detailsModal = document.getElementById('invoiceDetailsModal');
+        if (detailsModal) {
+            detailsModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const saleId = button.getAttribute('data-id');
+                const invoice = button.getAttribute('data-invoice');
+                const customer = button.getAttribute('data-customer');
+                const employee = button.getAttribute('data-employee');
+                const date = button.getAttribute('data-date');
+                const total = button.getAttribute('data-total');
+                const itemsStr = button.getAttribute('data-items');
+                
+                detailsModal.querySelector('#modal_download_btn').setAttribute('href', `/sales/${saleId}/pdf`);
+                
+                let items = [];
+                try {
+                    items = JSON.parse(itemsStr);
+                } catch (e) {
+                    console.error("Error parsing items JSON", e);
+                }
+                
+                detailsModal.querySelector('#modal_invoice_num').textContent = invoice;
+                detailsModal.querySelector('#modal_customer_name').textContent = customer;
+                detailsModal.querySelector('#modal_employee_name').textContent = employee;
+                detailsModal.querySelector('#modal_date').textContent = date;
+                detailsModal.querySelector('#modal_total_amount').textContent = total;
+                
+                const tableBody = detailsModal.querySelector('#modal_items_table_body');
+                tableBody.innerHTML = ''; // Clear previous items
+                
+                items.forEach(item => {
+                    const tr = document.createElement('tr');
+                    
+                    const tdId = document.createElement('td');
+                    tdId.textContent = item.product_name || `Product #${item.product_id}`;
+                    
+                    const tdQty = document.createElement('td');
+                    tdQty.textContent = item.quantity;
+                    
+                    const tdPrice = document.createElement('td');
+                    tdPrice.textContent = `₹${item.selling_price.toFixed(2)}`;
+                    
+                    const tdSubtotal = document.createElement('td');
+                    tdSubtotal.textContent = `₹${item.line_total.toFixed(2)}`;
+                    tdSubtotal.classList.add('fw-bold');
+                    
+                    tr.appendChild(tdId);
+                    tr.appendChild(tdQty);
+                    tr.appendChild(tdPrice);
+                    tr.appendChild(tdSubtotal);
+                    
+                    tableBody.appendChild(tr);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

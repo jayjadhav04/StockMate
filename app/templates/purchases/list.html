@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMate - Purchase Orders</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom Theme Styles & Scripts -->
+    <link rel="stylesheet" href="/static/css/theme.css?v=1.2">
+    <script src="/static/js/theme.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary-blue: #3b82f6;
+            --text-muted: #94a3b8;
+        }
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+        /* Sidebar styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 1.5rem 1rem;
+        }
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        .nav-link {
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff;
+            background-color: rgba(59, 130, 246, 0.15);
+        }
+        .nav-link.active {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        /* Main content layout */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-top {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-area {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+        .card-stat {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+        .table {
+            color: #f8fafc;
+        }
+        .table th {
+            background-color: rgba(15, 23, 42, 0.6);
+            color: #cbd5e1;
+            border-color: rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+        }
+        .table td {
+            background-color: transparent;
+            border-color: rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        .modal-content {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .modal-header, .modal-footer {
+            border-color: rgba(255,255,255,0.08);
+        }
+        .badge-role {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        .badge-owner {
+            background-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .badge-status {
+            font-weight: 700;
+            padding: 0.35em 0.65em;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .status-completed {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-box-seam-fill"></i> StockMate
+        </div>
+        <nav class="nav flex-column">
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/owner/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% else %}
+            <a class="nav-link" href="/employee/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            {% endif %}
+            <a class="nav-link" href="/products"><i class="bi bi-grid"></i> Products</a>
+            <a class="nav-link" href="/categories"><i class="bi bi-tags"></i> Categories</a>
+            <a class="nav-link" href="/customers"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/suppliers"><i class="bi bi-truck"></i> Suppliers</a>
+            
+            {% if user.role == "Owner" %}
+            <a class="nav-link" href="/employees"><i class="bi bi-person-badge"></i> Employees</a>
+            <a class="nav-link" href="/sales"><i class="bi bi-graph-up"></i> Sales History</a>
+            <a class="nav-link active" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            <a class="nav-link" href="/reports"><i class="bi bi-bar-chart-line"></i> Reports</a>
+            <a class="nav-link" href="/audit-logs"><i class="bi bi-shield-check"></i> Audit Logs</a>
+            {% else %}
+            <a class="nav-link" href="/sales/create"><i class="bi bi-cart-plus"></i> New Sale</a>
+            <a class="nav-link" href="/sales"><i class="bi bi-receipt-cutoff"></i> Personal Sales</a>
+            <a class="nav-link active" href="/purchases"><i class="bi bi-receipt"></i> Purchase Orders</a>
+            {% endif %}
+            <hr style="border-color: rgba(255, 255, 255, 0.15);">
+            <a class="nav-link text-danger" href="/auth/logout"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        </nav>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        
+        <!-- Header / Top Navbar -->
+        <header class="navbar-top">
+            <h4 class="mb-0">Purchase Orders</h4>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="fw-bold">{{ user.full_name }}</div>
+                    <span class="badge-role {% if user.role == 'Owner' %}badge-owner{% endif %}">{{ user.role }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- Success/Error Alerts -->
+            {% if success %}
+            <div class="alert alert-success alert-dismissible fade show border-0 bg-success-subtle text-success-emphasis" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ success }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+            
+            {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show border-0 bg-danger-subtle text-danger-emphasis" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <div class="card-stat">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Procurement Log History</h5>
+                    
+                    <a href="/purchases/create" class="btn btn-primary">
+                        <i class="bi bi-cart-plus-fill me-1"></i> New Purchase Order
+                    </a>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date (UTC)</th>
+                                <th>Supplier Name</th>
+                                <th style="text-align: right;">Total Amount</th>
+                                <th style="text-align: center;">Status</th>
+                                <th style="text-align: center; width: 25%;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if orders %}
+                                {% for order in orders %}
+                                <tr>
+                                    <td class="font-monospace fw-bold">PO-{{ "%04d" | format(order.id) }}</td>
+                                    <td class="small text-muted">{{ order.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                                    <td class="fw-bold">{{ order.supplier.supplier_name }}</td>
+                                    <td style="text-align: right;" class="fw-bold text-success">${{ "%.2f" | format(order.total_amount) }}</td>
+                                    <td style="text-align: center;">
+                                        {% if order.status == 'Pending' %}
+                                        <span class="badge-status status-pending">Pending Approval</span>
+                                        {% else %}
+                                        <span class="badge-status status-completed">Completed / Received</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div class="d-flex gap-2 justify-content-center">
+                                            <!-- Details Button -->
+                                            <button class="btn btn-info btn-sm text-white" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#viewDetailsModal"
+                                                    data-id="PO-{{ "%04d" | format(order.id) }}"
+                                                    data-items='[
+                                                        {% for item in order.items %}
+                                                        {
+                                                            "product": "{{ item.product.product_name }}",
+                                                            "qty": {{ item.quantity }},
+                                                            "cost": {{ item.cost_price }},
+                                                            "total": {{ item.line_total }}
+                                                        }{% if not loop.last %},{% endif %}
+                                                        {% endfor %}
+                                                    ]'>
+                                                <i class="bi bi-eye"></i> Details
+                                            </button>
+                                            
+                                            {% if order.status == 'Pending' %}
+                                                {% if user.role == 'Owner' %}
+                                                <!-- Approve & Complete -->
+                                                <form action="/purchases/{{ order.id }}/complete" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i> Approve</button>
+                                                </form>
+                                                
+                                                <!-- Delete -->
+                                                <form action="/purchases/{{ order.id }}/delete" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted p-4">No purchase orders registered.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- PO Details Modal -->
+    <div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewDetailsModalLabel">Purchase Order Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="mb-3 text-info fw-bold" id="details_po_number"></h6>
+                    
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th style="text-align: right;">Quantity</th>
+                                    <th style="text-align: right;">Purchase Cost Price</th>
+                                    <th style="text-align: right;">Line Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="details_table_body">
+                                <!-- Dynamic JS injection -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Modal populate logic for Details
+        const detailsModal = document.getElementById('viewDetailsModal');
+        if (detailsModal) {
+            detailsModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const poId = button.getAttribute('data-id');
+                const itemsData = JSON.parse(button.getAttribute('data-items'));
+                
+                detailsModal.querySelector('#details_po_number').textContent = `Order Reference: ${poId}`;
+                
+                const tableBody = detailsModal.querySelector('#details_table_body');
+                tableBody.innerHTML = '';
+                
+                let grandTotal = 0.0;
+                
+                itemsData.forEach(item => {
+                    grandTotal += item.total;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="fw-bold">${item.product}</td>
+                        <td style="text-align: right;">${item.qty}</td>
+                        <td style="text-align: right;">$${item.cost.toFixed(2)}</td>
+                        <td style="text-align: right;" class="text-success fw-bold">$${item.total.toFixed(2)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Add grand total row
+                const totalRow = document.createElement('tr');
+                totalRow.innerHTML = `
+                    <td colspan="3" class="text-end fw-bold">Grand Total:</td>
+                    <td style="text-align: right;" class="text-success fw-bold font-monospace">$${grandTotal.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(totalRow);
+            });
+        }
+    </script>
+</body>
+</html>
