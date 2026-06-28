@@ -6,8 +6,6 @@
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71105?style=for-the-badge&logo=SQLAlchemy&logoColor=white)](https://www.sqlalchemy.org/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
 [![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **Manage Stock. Track Sales. Grow Business.**
 
@@ -48,9 +46,8 @@ Explore the live application and interactive API documentation:
 
 | Service | Endpoint / Link | Description |
 | :--- | :--- | :--- |
-| **Frontend / Web App** | `https://YOUR_RAILWAY_DEPLOYMENT_LINK` | Access the dashboards and UI screens. |
-| **API Documentation** | `https://YOUR_RAILWAY_DEPLOYMENT_LINK/docs` | Interactive Swagger UI for REST endpoint testing. |
-| **GitHub Repository** | `https://github.com/YOUR_GITHUB_REPOSITORY` | Explore the codebase and project commits. |
+| **Frontend / Web App** | `https://stock-mate.up.railway.app/` | Access the dashboards and UI screens. |
+| **API Documentation** | `https://stock-mate.up.railway.app//docs` | Interactive Swagger UI for REST endpoint testing. |
 
 ---
 
@@ -430,20 +427,9 @@ It showcases the ability to design, build, and deploy production-ready systems u
 
 ## ✍️ Author
 
-**YOUR_NAME**
-* **GitHub**: [@YOUR_GITHUB_USERNAME](https://github.com/YOUR_GITHUB_USERNAME)
-* **LinkedIn**: [YOUR_LINKEDIN_URL](https://linkedin.com/in/YOUR_LINKEDIN_URL)
-* **Email**: `YOUR_EMAIL@example.com`
-* **Portfolio**: [YOUR_PORTFOLIO_URL](https://YOUR_PORTFOLIO_URL)
+**Jay Jadhav** 
+* **LinkedIn**: https://linkedin.com/in/jayjadhav04
+* **Email**: jaydjadhav1111@gmail.com
+* **Portfolio**: https://jay-jadhav-portfolio.vercel.app/
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## ⭐ Support
-
-If you find this project useful or used it for learning, please consider leaving a ⭐ on GitHub! Your support helps make the project more visible.
