@@ -44,7 +44,8 @@ Explore the live application and interactive API documentation:
 
 | Service | Endpoint / Link | Description |
 | :--- | :--- | :--- |
-| **Frontend / Web App** | https://stock-mate.up.railway.app/ | Access the dashboards and UI screens. |
+| **Frontend / Web App (Render)** | https://stockmate-vlpq.onrender.com/ | Access the dashboards and UI screens. |
+| **Frontend / Web App (Railway)** | https://stock-mate.up.railway.app/ | Access the dashboards and UI screens. |
 | **API Documentation** | https://stock-mate.up.railway.app//docs | Interactive Swagger UI for REST endpoint testing. |
 
 ---
